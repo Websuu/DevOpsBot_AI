@@ -36,7 +36,7 @@ b) Budowanie projektu:
    3. Skompiluj projekt:
       cmake --build build --config Release
    4. Po utworzeniu pliku .exe w celu utworzenia bibliotek ddl należy wpisać:
-      windeployqt build/DevOpsBotAI.exe
+      windeployqt build\DevOpsBotAI.exe
 
 c) Uruchomienie:
    Aplikacja znajduje się w: ./build/Release/DevOpsBot_AI.exe
