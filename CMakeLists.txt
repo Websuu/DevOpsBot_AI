@@ -1,12 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
+
+# NAPRAWA B≈ÅƒòDU NOWEJ WERSJI CMAKE (4.x)
+# To zastƒôpuje konieczno≈õƒá wpisywania flagi w terminalu
+if(POLICY CMP0135)
+    cmake_policy(SET CMP0135 NEW)
+endif()
+
 project(DevOpsBotAI VERSION 1.0 LANGUAGES CXX)
 
-# W≥πczenie automatycznej obs≥ugi narzÍdzi Qt
-set(CMAKE_AUTOMOC ON) # To naprawi b≥Ídy "nierozpoznany symbol zewnÍtrzny"
+# W≈ÇƒÖczenie automatycznej obs≈Çugi narzƒôdzi Qt
+set(CMAKE_AUTOMOC ON) 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# Naprawa ostrzeøenia /EHsc (obs≥uga wyjπtkÛw)
+# Obs≈Çuga wyjƒÖtk√≥w dla MSVC (zostawiamy, nie przeszkadza w MinGW)
 if(MSVC)
     add_compile_options(/EHsc)
 endif()
@@ -14,23 +21,23 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 1. Znajdü Qt6 (Skonfigurowaliúmy to wczeúniej w VS)
+# 1. Znajd≈∫ Qt6
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
-# 2. Automatyczne pobieranie biblioteki CURL (Rozwiπzuje TwÛj b≥πd)
+# 2. Automatyczne pobieranie biblioteki CURL
 include(FetchContent)
 FetchContent_Declare(
   curl
   URL https://github.com/curl/curl/releases/download/curl-8_4_0/curl-8.4.0.tar.gz
 )
 
-# Wy≥πczamy zbÍdne funkcje CURL, øeby kompilacja by≥a szybka i bezproblemowa
+# Konfiguracja CURL - wy≈ÇƒÖczamy zbƒôdne rzeczy
 set(BUILD_CURL_EXE OFF CACHE INTERNAL "")
-set(BUILD_TESTING OFF CACHE INTERNAL "")
+set(BUILD_TESTING OFF CACHE INTERNAL "") # To wy≈ÇƒÖcza tylko testy wewnƒÖtrz biblioteki CURL
 set(CURL_USE_LIBPSL OFF CACHE INTERNAL "")
 set(HTTP_ONLY ON CACHE INTERNAL "")
-
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+
 FetchContent_MakeAvailable(curl)
 
 # 3. Automatyczne pobieranie nlohmann/json
@@ -40,7 +47,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# Pliki ürÛd≥owe
+# Pliki ≈∫r√≥d≈Çowe
 set(SOURCES
     src/main.cpp
     src/MainWindow.cpp
@@ -49,7 +56,7 @@ set(SOURCES
     src/Logger.cpp
 )
 
-# Pliki nag≥Ûwkowe
+# Pliki nag≈Ç√≥wkowe
 set(HEADERS
     src/MainWindow.h
     src/OllamaClient.h
@@ -59,14 +66,15 @@ set(HEADERS
 
 # Tworzenie pliku wykonywalnego
 qt_add_executable(DevOpsBotAI WIN32 ${SOURCES} ${HEADERS})
+
 # Linkowanie bibliotek
-# Uwaga: dla FetchContent CURL uøywamy nazwy celu 'libcurl'
 target_link_libraries(DevOpsBotAI PRIVATE
     Qt6::Widgets
     libcurl
     nlohmann_json::nlohmann_json
 )
 
-# Opcjonalne: Testy jednostkowe (moøesz odkomentowaÊ pÛüniej)
-# enable_testing()
-# add_subdirectory(tests)
+# --- SEKCJA TEST√ìW (TERAZ ODBLOKOWANA) ---
+# To sprawi, ≈ºe komenda 'ctest' w folderze build zacznie dzia≈Çaƒá
+enable_testing()
+add_subdirectory(tests)
