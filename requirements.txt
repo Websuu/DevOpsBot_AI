@@ -1,0 +1,9 @@
+# Wymagania systemowe i biblioteki dla DevOpsBot AI
+1. Środowisko: C++17 lub nowszy
+2. Framework UI: Qt6 (Core, Widgets, Network, Concurrent)
+3. Komunikacja: libcurl (z obsługą SSL)
+4. JSON: nlohmann/json
+5. LLM: Ollama (działająca lokalnie na porcie 11434)
+6. Model: Bielik-1.1-B-v0.1 lub Llama3
+7. Dokumentacja: Doxygen 
+8. Testy: Google Test (GTest)
