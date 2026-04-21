@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
-
+# Automatyczne ustawienie ścieżki do Qt i włączenie testów
+set(CMAKE_PREFIX_PATH "C:/Qt/6.11.0/mingw_64")
+set(BUILD_TESTING ON CACHE BOOL "" FORCE)
 # NAPRAWA BŁĘDU NOWEJ WERSJI CMAKE (4.x)
 # To zastępuje konieczność wpisywania flagi w terminalu
 if(POLICY CMP0135)
