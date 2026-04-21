@@ -1,4 +1,4 @@
-﻿#ifndef MAINWINDOW_H
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -9,13 +9,13 @@
 #include <QLabel>
 #include <QThread>
 #include <QKeyEvent>
-#include <QCheckBox> // Dodane dla opcji Dry Run
+#include <QCloseEvent> // DODANE: Do obsługi zamykania okna
+#include <QCheckBox>
 
 class WorkerThread;
 
 /**
  * @brief Główna klasa okna aplikacji DevOpsBot AI.
- * Obsługuje interfejs graficzny, skróty klawiszowe (F12) oraz logikę bezpieczeństwa.
  */
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -25,52 +25,44 @@ public:
 
 protected:
     /**
-     * @brief Obsługuje zdarzenia klawiatury.
-     * F12: Przełącza widoczność terminala diagnostycznego.
+     * @brief Obsługuje zdarzenia klawiatury (F12).
      */
     void keyPressEvent(QKeyEvent* event) override;
 
+    /**
+     * @brief Obsługuje zdarzenie zamykania okna.
+     * Tutaj wywołamy zapisywanie ustawień (QSettings).
+     */
+    void closeEvent(QCloseEvent* event) override; // DODANE
+
 private slots:
-    /** @brief Inicjuje proces generowania i (opcjonalnie) egzekucji komendy. */
     void onExecuteClicked();
-
-    /** @brief Wywoływane, gdy AI zwróci gotową komendę. */
     void onCommandGenerated(const QString& command);
-
-    /** @brief Wywoływane po zakończeniu operacji w terminalu. */
     void onCommandExecuted(const QString& output);
-
-    /** @brief Wywoływane w przypadku błędów sieciowych lub systemowych. */
     void onErrorOccurred(const QString& errorMsg);
 
 private:
-    QLineEdit* inputField;    // Pole polecenia użytkownika
-    QTextEdit* contextField;  // Instrukcje systemowe dla AI
-    QLineEdit* responseField; // Wynikowa komenda wygenerowana przez AI
-    QTextEdit* outputField;   // Wyjście z terminala (STDOUT)
-    QPushButton* executeBtn;  // Przycisk startowy
-    QCheckBox* dryRunCheck;   // Checkbox trybu bezpiecznego ("Tylko generuj")
+    QLineEdit* inputField;
+    QTextEdit* contextField;  // To pole (Protokół Systemowy) będzie zapamiętywane
+    QLineEdit* responseField;
+    QTextEdit* outputField;
+    QPushButton* executeBtn;
+    QCheckBox* dryRunCheck;
 
-    /** @brief Buduje strukturę UI i nakłada style CSS. */
     void setupUI();
+
+    // Opcjonalnie: funkcje pomocnicze dla czytelności kodu
+    void loadSettings(); // DODANE
+    void saveSettings(); // DODANE
 };
 
 /**
- * @brief Klasa wątku roboczego. Odpowiada za ciężkie operacje (HTTP do Ollama, procesy systemowe).
- * Zastosowanie wątku zapobiega "zamrażaniu" okna aplikacji.
+ * @brief Klasa wątku roboczego (Ollama API / Terminal).
  */
 class WorkerThread : public QThread {
     Q_OBJECT
 public:
-    /**
-     * @brief Konstruktor wątku.
-     * @param context Kontekst systemowy.
-     * @param prompt Zapytanie użytkownika.
-     * @param dryRun Jeśli true, komenda nie zostanie wykonana w systemie.
-     */
     WorkerThread(const QString& context, const QString& prompt, bool dryRun, QObject* parent = nullptr);
-
-    /** @brief Implementacja logiki wątku. */
     void run() override;
 
 signals:
@@ -81,7 +73,7 @@ signals:
 private:
     QString m_context;
     QString m_prompt;
-    bool m_dryRun; // Flaga trybu bezpiecznego
+    bool m_dryRun;
 };
 
 #endif // MAINWINDOW_H
