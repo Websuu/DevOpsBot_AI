@@ -29,14 +29,17 @@ a) Przygotowanie AI:
 
 b) Budowanie projektu:
    1. Sklonuj repozytorium: 
-      git clone https://github.com/Websuu/JPO_DevOpsBot_AI.git
+      git clone https://github.com/Websuu/DevOpsBot_AI.git
    2. Wejdź do folderu i skonfiguruj CMake:
-      cmake -B build -DCMAKE_BUILD_TYPE=Release
+      cd DevOpsBot_AI
+      cmake -B build -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/6.11.0/mingw_64" -DCMAKE_POLICY_VERSION_MINIMUM=3.5   
    3. Skompiluj projekt:
       cmake --build build --config Release
+   4. Po utworzeniu pliku .exe w celu utworzenia bibliotek ddl należy wpisać:
+      windeployqt build/DevOpsBotAI.exe
 
 c) Uruchomienie:
-   Aplikacja znajduje się w: ./build/Release/JPO_DevOpsBot_AI.exe
+   Aplikacja znajduje się w: ./build/Release/DevOpsBot_AI.exe
 
 4. TESTY JEDNOSTKOWE
 Projekt posiada wbudowane testy modułu CommandExecutor:
