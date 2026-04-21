@@ -1,4 +1,4 @@
-﻿#include "MainWindow.h"
+#include "MainWindow.h"
 #include "OllamaClient.h"
 #include "CommandExecutor.h"
 #include "Logger.h"
@@ -6,7 +6,9 @@
 #include <QFontDatabase>
 #include <QKeyEvent>
 #include <QCheckBox>
-#include <iostream> // Niezbędne do std::cout w konsoli F12
+#include <QSettings>    // Dodane do obsługi zapisywania
+#include <QCloseEvent>  // Dodane do obsługi zamykania
+#include <iostream> 
 
 #ifdef Q_OS_WIN
 #include <Windows.h> 
@@ -14,6 +16,16 @@
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setupUI();
+
+    // --- WCZYTYWANIE USTAWIEŃ I DOMYŚLNA INSTRUKCJA ---
+    QSettings settings("DevOpsBotTeam", "DevOpsBotAI");
+
+    // TUTAJ MOŻESZ ZMIENIĆ DOMYŚLNĄ INSTRUKCJĘ STARTOWĄ:
+    QString defaultInstruction = "Podaj TYLKO surową komendę Windows do wpisania w cmd. Zakaz używania markdowna, wstępów i wyjaśnień. TYLKO SUROWA KOMENDA, BEZ WYJAŚNIEŃ";
+
+    // Wczytaj zapisany tekst, jeśli go nie ma - użyj domyślnej instrukcji
+    QString savedContext = settings.value("system_protocol", defaultInstruction).toString();
+    contextField->setPlainText(savedContext);
 
     // Inicjalne ukrycie konsoli diagnostycznej
 #ifdef Q_OS_WIN
@@ -23,6 +35,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow() {}
+
+// OBSŁUGA ZAMYKANIA - ZAPISYWANIE
+void MainWindow::closeEvent(QCloseEvent* event) {
+    QSettings settings("DevOpsBotTeam", "DevOpsBotAI");
+    // Zapisz to, co użytkownik wpisał w polu Protokół Systemowy
+    settings.setValue("system_protocol", contextField->toPlainText());
+
+    QMainWindow::closeEvent(event);
+}
 
 void MainWindow::setupUI() {
     this->setWindowTitle("DevOpsBot AI - Terminal Operacyjny v1.2");
@@ -66,7 +87,7 @@ void MainWindow::setupUI() {
     layout->addWidget(new QLabel("Protokół Systemowy:"));
     contextField = new QTextEdit(this);
     contextField->setFixedHeight(60);
-    contextField->setPlainText("Jesteś terminalem DevOps. Podaj TYLKO surową komendę Windows. Zakaz używania markdowna, wstępów i wyjaśnień.");
+    // Tekst inicjalny jest teraz ustawiany w konstruktorze przez QSettings
     layout->addWidget(contextField);
 
     layout->addWidget(new QLabel("Polecenie naturalne:"));
@@ -184,7 +205,7 @@ void WorkerThread::run() {
         }
 
         QStringList forbidden = { "del ", "rmdir", "rd ", "format", "erase", "shutdown" };
-        if (forbidden.contains(qCmd.toLower())) { // Uproszczone sprawdzenie dla przykładu
+        if (forbidden.contains(qCmd.toLower())) {
             emit errorOccurred("BLOKADA RDZENIA.");
             return;
         }
@@ -195,7 +216,6 @@ void WorkerThread::run() {
     catch (const std::exception& e) {
         QString errorMsg = QString::fromStdString(e.what());
 
-        // --- ZAAWANSOWANA DIAGNOSTYKA W KONSOLI (F12) ---
         std::cout << "\n====================================================" << std::endl;
         std::cout << " [!] RAPORT DIAGNOSTYCZNY DEVOPS BOT" << std::endl;
         std::cout << "====================================================" << std::endl;
