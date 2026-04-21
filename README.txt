@@ -32,7 +32,7 @@ b) Budowanie projektu:
       git clone https://github.com/Websuu/DevOpsBot_AI.git
    2. Wejdź do folderu i skonfiguruj CMake:
       cd DevOpsBot_AI
-      cmake -B build -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/6.11.0/mingw_64" -DCMAKE_POLICY_VERSION_MINIMUM=3.5   
+      cmake -B build -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/Qt/6.11.0/mingw_64" -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=ON
    3. Skompiluj projekt:
       cmake --build build --config Release
    4. Po utworzeniu pliku .exe w celu utworzenia bibliotek ddl należy wpisać:
