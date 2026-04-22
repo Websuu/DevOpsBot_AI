@@ -45,6 +45,8 @@ c) Uruchomienie:
 Projekt posiada wbudowane testy modułu CommandExecutor:
    cd build
    ctest --output-on-failure
+5. Dokumentacja Doxygen
+   cmake --build build --target documentation
 
 5. AUTORZY
 - Mateusz Kołodziejczak
